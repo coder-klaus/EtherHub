@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitepress'
-import { set_sidebar } from '../utils/autoSideBar'
+import { generateSidebarConfig } from '../utils/autoSideBar'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -7,7 +7,7 @@ export default defineConfig({
   title: "EtherHub",
   description: "欢迎来到 EtherHub, 这里是 CoderKlaus 的前端知识分享平台",
   base: '/EtherHub',
-  head: [['link', { rel: 'icon', href: '/EtherHub/favicon.' }]],
+  head: [['link', { rel: 'icon', href: '/EtherHub/favicon.ico' }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     outline: 'deep',
@@ -19,9 +19,7 @@ export default defineConfig({
       }
     ],
 
-    sidebar: {
-      "/docs/JavaScript": set_sidebar("/docs/JavaScript")
-    },
+    sidebar: generateSidebarConfig(),
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/coder-klaus' },
