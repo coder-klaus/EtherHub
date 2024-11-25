@@ -1,51 +1,61 @@
 # Put in .github/workflows
-name: deploy changes
+name: deploy EtherHub
+
 on:
-  push:  # 有代码push或者merge到main分支时，才进行下面的操作
-    branches:
-      - main
+  push:
+    branches: [main]
+
+# 设置tokenn访问权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 只允许同时进行一次部署，跳过正在运行和最新队列之间的运行队列
+# 但是，不要取消正在进行的运行，因为我们希望允许这些生产部署完成
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
-  deploy:
+  # 构建工作
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Install Node.js
+        with:
+          fetch-depth: 0 # 如果未启用 lastUpdated，则不需要
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2 # 安装pnpm并添加到环境变量
+        with:
+          version: 8.6.12 # 指定需要的 pnpm 版本
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
-
-      - uses: pnpm/action-setup@v2 # 配置使用pnpm
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: 7
-          run_install: false
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
+          node-version: 18
+          cache: pnpm # 设置缓存
+      - name: Setup Pages
+        uses: actions/configure-pages@v3  # 在工作流程自动配置GithubPages
       - name: Install dependencies
-        run: pnpm install
-
-      - name: Build docs
-        run: pnpm -F docs build
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        run: pnpm install # 安装依赖
+      - name: Build with VitePress
+        run: |
+          pnpm run docs:build # 启动项目
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2  # 上传构建产物
         with:
-          github_token: ${{ secrets.RAN_ACTIONS_TOKEN }} # 配置在项目里的secrets
-          exclude_assets: ''
-          publish_dir: packages/docs/.vitepress/dist # 需要发布内容的路径
+          path: .vitepress/dist # 指定上传的路径，当前是根目录，如果是docs需要加docs/的前缀
+
+  # 部署工作
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} # 从后续的输出中获取部署后的页面URL
+    needs: build    # 在build后面完成
+    runs-on: ubuntu-latest  # 运行在最新版本的ubuntu系统上
+    name: Deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment  # 指定id
+        uses: actions/deploy-pages@v2 # 将之前的构建产物部署到github pages中
