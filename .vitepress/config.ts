@@ -7,7 +7,7 @@ export default defineConfig({
   title: "EtherHub",
   description: "欢迎来到 EtherHub, 这里是 CoderKlaus 的前端知识分享平台",
   base: '/EtherHub',
-  head: [['link', { rel: 'icon', href: '/EtherHub/favicon.jpg' }]],
+  head: [['link', { rel: 'icon', href: '/EtherHub/favicon.' }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     outline: 'deep',

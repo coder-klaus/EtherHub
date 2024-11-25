@@ -7,7 +7,7 @@ hero:
   text: 欢迎来到 EtherHub
   tagline: CoderKlaus的前端知识分享平台
   image:
-    src: /public/bg.svg
+    src: /bg.svg
     alt: EtherHub - CoderKlaus的前端知识分享平台
 
 features:
