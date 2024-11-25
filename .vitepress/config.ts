@@ -3,11 +3,23 @@ import { generateSidebarConfig } from '../utils/autoSideBar'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  lastUpdated: true,
   title: "EtherHub",
   description: "欢迎来到 EtherHub, 这里是 CoderKlaus 的前端知识分享平台",
   base: '/EtherHub',
   head: [['link', { rel: 'icon', href: '/EtherHub/favicon.ico' }]],
+  lastUpdated: true,
+  markdown: {
+    container: {
+      tipLabel: '提示',
+      warningLabel: '警告',
+      dangerLabel: '危险',
+      infoLabel: '信息',
+      detailsLabel: '详细信息'
+    },
+    image: {
+      lazyLoading: true
+    }
+  },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     outline: 'deep',
