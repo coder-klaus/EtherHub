@@ -16,3 +16,15 @@
     --vp-home-hero-image-filter: blur(68px);
   }
 }
+
+mark {
+  background-color: #f8f840;
+}
+
+.footnotes-sep {
+  margin-top: 50px!important;
+}
+
+.footnote-item {
+  font-size: 14px;
+}

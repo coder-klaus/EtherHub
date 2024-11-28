@@ -1,10 +1,12 @@
 {
   "scripts": {
-    "docs:dev": "vitepress dev",
-    "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "start": "vitepress dev --port 8080",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
   },
   "dependencies": {
+    "markdown-it-footnote": "^4.0.0",
+    "markdown-it-mark": "^4.0.0",
     "vitepress": "^1.5.0"
   },
   "type": "module",

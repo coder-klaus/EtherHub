@@ -10,6 +10,7 @@ const WHITE_LIST: string[] = [
   "node_modules",
   ".idea",
   "assets",
+  "notes"
 ];
 
 // 判断是否是文件夹
@@ -30,13 +31,13 @@ interface SidebarItem {
 // 把方法导出直接使用
 function getList(params: string[], path1: string, pathname: string): SidebarItem[] {
   const res: SidebarItem[] = [];
-  for (let file of params) {
+  for (let file of params.filter(file => !WHITE_LIST.includes(file))) {
     const dir = path.join(path1, file);
     const isDir = isDirectory(dir);
     if (isDir) {
       const files = fs.readdirSync(dir);
       res.push({
-        text: file,
+        text: file.slice(4),
         collapsible: true,
         items: getList(files, dir, `${pathname}/${file}`),
       });
@@ -47,7 +48,7 @@ function getList(params: string[], path1: string, pathname: string): SidebarItem
         continue;
       }
       res.push({
-        text: name.replace(/\.md$/, ""),
+        text: name.slice(4).replace(/\.md$/, ""),
         link: `${pathname}/${name}`,
       });
     }

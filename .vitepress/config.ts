@@ -1,4 +1,6 @@
 import { defineConfig } from 'vitepress'
+import markdownItMark from 'markdown-it-mark';
+import footnote from 'markdown-it-footnote';
 import { generateSidebarConfig } from '../utils/autoSideBar'
 
 // https://vitepress.dev/reference/site-config
@@ -18,6 +20,12 @@ export default defineConfig({
     },
     image: {
       lazyLoading: true
+    },
+    config: (md) => {
+      // 实现脚注功能
+      md.use(footnote);
+      // 使用==xxx== 实现语法高亮
+      md.use(markdownItMark);
     }
   },
   themeConfig: {

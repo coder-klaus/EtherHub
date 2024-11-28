@@ -1,3 +1,5 @@
+# proxy
+
 ## 诞生原因
 
 在 JavaScript 中，我们有时需要监听对象属性的变化，比如获取或设置属性的操作。
@@ -43,30 +45,25 @@ console.log(user.age) // => 18
 */
 ```
 
-但``Object.definePropert`有一定的局限性
+### 局限性
 
-1. **只能监听单个属性**， 需要手动为每个属性定义 `get` 和 `set`。
-2. **无法监听新增/删除操作**：
-   + `Object.defineProperty` 无法处理对象的结构变化
-   + 如果新增了属性，该属性默认是没有`getter/setter`的，需要单独设置
+1. **属性级别**
+   + `Object.defineProperty` 只能用于单个属性的设置，无法直接应用于整个对象。如果需要监听对象的每个属性，必须逐个迭代并进行设置。
+   + 新增属性时，这些属性不会自动具有 `getter/setter`，需要手动为其设置。
 
-
-
-为了解决这个问题，ES6引入了`proxy`
+2. **功能有限**
+   + 只能监听属性的 `getter` 和 `setter` 操作。
+   + 无法监听其他类型的操作。
 
 
 
 ## proxy
 
-`Proxy` 是 ES6 中引入的一个类，用于创建一个代理对象。
+为了解决这个问题，ES6 引入了 `Proxy`。`Proxy` 是 ES6 中提供的一个类，用于创建代理对象。
 
-代理对象可以拦截并自定义对另一个对象的基本操作，比如属性的读取、写入、删除等。
+代理对象能够拦截并自定义对另一个对象的基本操作，例如属性的读取、写入和删除等。
 
-
-
-`proxy`是对整个对象的监听，而不是对单个属性的监听。
-
-+ 如果新增了属性，则新增的属性会直接可以被监听，而不需要再手动添加对应监听
+`Proxy` 允许对整个对象进行监听，而不仅仅是单个属性。所以当新增属性时，这些属性会自动被监听，无需手动添加监听器。
 
 
 
@@ -77,10 +74,11 @@ const proxy = new Proxy(target, handler);
 ```
 
 - **`target`**：被代理的对象，可以是任何引用类型，如对象、数组、函数等。
+
 - **`handler`**：处理对象，包含捕获器方法，用于定义拦截行为。
 
-  - 自定义了对应拦截，则执行对应拦截
-  - 没有自定义对象拦截，执行默认逻辑
+  - 如果自定义了拦截器，则执行自定义拦截。
+  - 如果没有自定义拦截器，则执行默认逻辑。
 
   
 
@@ -99,18 +97,17 @@ const objProxy = new Proxy(obj, {
   set(target, key, value) {
     console.log(`${key} setter => ${value}`);
     target[key] = value;
-    // setter需要返回布尔值标识是否赋值成功
+    // 返回布尔值标识属性是否设置成功
     return true;
   }
 });
 
-// 后续操作的都是代理对象，只有操作代理对象才会触发捕获器 [!code warning]
+// [!code warning] 操作代理对象才能触发拦截，不要操作源对象
 console.log(objProxy.name);
 objProxy.name = "Steven";
 console.log(objProxy.name);
 console.log(obj);
 /*
-=>
   name getter
   Klaus
   name setter => Steven
@@ -124,16 +121,16 @@ console.log(obj);
 
 ### 捕获器
 
-`proxy`是专门用于进行对象代理的API，相比`Object.defineProperty`可以监听更多的操作
+`Proxy` 是专门用于对象代理的 API，相比 `Object.defineProperty`，它可以监听更多的操作。
 
-`proxy`一共提供了13种捕获器 => 所有的代理操作都可以通过**捕获器（Handler Traps）**进行设置
+`Proxy` 提供了 13 种捕获器，所有的代理操作都可以通过`捕获器（Handler Traps)`进行设置。
 
 | 方法                                             | 描述                                                         |
 | ------------------------------------------------ | ------------------------------------------------------------ |
 | handler.getPrototypeOf(target)                   | `Object.getPrototypeOf` 方法的捕捉器。                       |
 | handler.setPrototypeOf(target, proto)            | `Object.setPrototypeOf` 方法的捕捉器。                       |
 |                                                  |                                                              |
-| handler.isExtensible(target)                     | `Object.isExtensible` 方法的捕捉器（判断是否可以新增属性）。 |
+| handler.isExtensible(target)                     | `Object.isExtensible` 方法的捕捉器。                         |
 | handler.preventExtensions(target)                | `Object.preventExtensions` 方法的捕捉器。                    |
 |                                                  |                                                              |
 | handler.getOwnPropertyDescriptor(target, prop)   | `Object.getOwnPropertyDescriptor` 方法的捕捉器。             |
@@ -202,7 +199,8 @@ const objProxy = new Proxy(obj, {
   },
   deleteProperty(target, key) {
     console.log("delete捕捉器")
-    delete target[key]
+    // deleteProperty需要返回布尔值标识是否删除属性成功
+    reutrn delete target[key]
   }
 })
 
@@ -218,6 +216,7 @@ function foo(...args) {
   console.log(args) // => [ 'Klaus', 'Steven' ]
 }
 
+// 只有apply捕获器，没有call捕获器
 const proxy = new Proxy(foo, {
   apply(target, thisArg, args) {
     console.log("函数的apply侦听")
@@ -237,6 +236,7 @@ function Person(name, age) {
 }
 
 const proxy = new Proxy(Person, {
+  // 参数params是数组类型参数
   construct(target, params, newTarget) {
     console.log(target, params, newTarget) // => [Function: Person] [ 'Klaus', 23 ] [Function: Person]
     return new target(...params)
@@ -263,5 +263,4 @@ const withDefault = (target, defaultValue) => new Proxy(target, {
 const data = withDefault({}, 'default value');
 console.log(data.someKey); // 输出: default value
 ```
-
 
