@@ -41,7 +41,7 @@ jobs:
         run: pnpm install # 安装依赖
       - name: Build with VitePress
         run: |
-          pnpm run docs:build # 启动项目
+          pnpm run build # 启动项目
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2  # 上传构建产物
         with:
