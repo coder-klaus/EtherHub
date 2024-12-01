@@ -386,3 +386,15 @@ console.log(NaN === NaN) // => false
 console.log(Object.is(NaN, NaN)) // => true
 ```
 
+
+
+## Object
+
+将参数转函数类型，无法转换则返回空对象
+
+```js
+console.log(Object(123)) // [Number: 123]
+console.log(Object({ name: 'Klaus' })) // { name: 'Klaus' }
+console.log(Object(null)) // {}
+```
+
