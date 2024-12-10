@@ -24,7 +24,7 @@ export default defineConfig({
     config: (md) => {
       // 实现脚注功能
       md.use(footnote);
-      // 使用==xxx== 实现语法高亮
+      // 使用 ==xxx== 实现语法高亮
       md.use(markdownItMark);
     }
   },
