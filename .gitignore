@@ -6,9 +6,3 @@ cache
 .cache
 .temp
 *.local
-
-package-lock.json
-yarn-error.log
-pnpm-debug.log
-pnpm-error.log
-pnpm-lock.yaml
