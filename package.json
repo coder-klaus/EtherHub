@@ -2,7 +2,8 @@
   "scripts": {
     "start": "vitepress dev --port 8080",
     "build": "vitepress build",
-    "preview": "vitepress preview"
+    "preview": "vitepress preview",
+    "auto:toc": "ts-node ./utils/generate-toc"
   },
   "dependencies": {
     "markdown-it-footnote": "^4.0.0",
@@ -11,6 +12,7 @@
   },
   "type": "module",
   "devDependencies": {
-    "@types/node": "^22.9.3"
+    "@types/node": "^22.10.2",
+    "ts-node": "^10.9.2"
   }
 }
