@@ -1,7 +1,10 @@
 # Number
+
+
 [[TOC]]
 
 ## 基本使用
+
 ```js
 var n = new Number(1);
 typeof n // "object"
