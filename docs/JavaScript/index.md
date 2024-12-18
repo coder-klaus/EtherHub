@@ -1,5 +1,5 @@
 # 目录
 
-1. [内置对象](vaults/内置对象/index.md)
-2. [包装类](vaults/包装类/index.md)
-3. [字典](vaults/字典/index.md)
+1. [邂逅JavaScript](vaults/001-邂逅JavaScript/index.md)
+2. [类型系统](vaults/002-类型系统/index.md)
+3. [类型转换](vaults/003-类型转换/index.md)
